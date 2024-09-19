@@ -47,7 +47,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	url, err := GetPresignedUrl(s3Client, fileKey)
+	url, err := getPresignedUrl(s3Client, fileKey)
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(0)
@@ -72,7 +72,7 @@ func putObjectToBucket(s3Client *s3.Client, myReader *os.File, filePath string) 
 	return objectKey, err
 }
 
-func GetPresignedUrl(s3Client *s3.Client, objectKey string) (string, error) {
+func getPresignedUrl(s3Client *s3.Client, objectKey string) (string, error) {
 	presignClient := s3.NewPresignClient(s3Client)
 	request, err := presignClient.PresignGetObject(context.TODO(), &s3.GetObjectInput{
 		Bucket: aws.String(BUCKET_NAME),
