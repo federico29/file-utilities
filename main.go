@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -21,13 +22,14 @@ const (
 )
 
 func main() {
-	filePath, err := parseArguments()
-	if err != nil {
-		log.Fatal(err)
+	filePath := flag.String("file-path", "", "The absolute path of the file you want to upload")
+	flag.Parse()
+	if *filePath == "" {
+		log.Fatal("The file path argument is required")
 		os.Exit(0)
 	}
 
-	file, err := os.Open(filePath)
+	file, err := os.Open(*filePath)
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(0)
@@ -41,7 +43,7 @@ func main() {
 
 	s3Client := s3.NewFromConfig(cfg)
 
-	fileKey, err := putObjectToBucket(s3Client, file, filePath)
+	fileKey, err := putObjectToBucket(s3Client, file, *filePath)
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(0)
@@ -85,16 +87,4 @@ func getPresignedUrl(s3Client *s3.Client, objectKey string) (string, error) {
 	}
 
 	return request.URL, err
-}
-
-func parseArguments() (string, error) {
-	args := os.Args
-	if len(args) < 2 {
-		return "", fmt.Errorf("missing arguments: expected 1")
-	}
-	if len(args) > 2 {
-		return "", fmt.Errorf("too many arguments: expected 1")
-	}
-
-	return args[1], nil
 }
