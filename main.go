@@ -17,7 +17,7 @@ import (
 
 const (
 	REGION      string = "us-east-1"
-	BUCKET_NAME string = "my-test-bucket-fbm"
+	BUCKET_NAME string = "fbm-files"
 	FILES_PATH  string = "files/"
 )
 
